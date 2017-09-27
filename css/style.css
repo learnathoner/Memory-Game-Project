@@ -1,0 +1,44 @@
+@import url(http://weloveiconfonts.com/api/?family=maki);
+
+/* maki */
+[class*="maki-"]:before {
+  font-family: 'maki', sans-serif;
+}
+
+table {
+  height: 400px;
+  width: 400px;
+  border-spacing: 10px;
+  border-collapse: false;
+  border: 1px solid black;
+  background: blue;
+  table-layout: fixed;
+}
+
+/*tr {
+  height: 100px;
+}*/
+
+tr {
+  background-color: red;
+  margin: 10px;
+}
+
+td {
+  border-radius: 5px;
+}
+
+div {
+  font-size: 2em;
+  text-align: center;
+  max-height: 100%;
+  max-width: 100%;
+  border: 1px solid black;
+}
+
+.maki-library {
+  border: 1px solid white;
+  /*text-align: center;*/
+  /*margin-right: auto;
+  margin-left: auto;*/
+}
