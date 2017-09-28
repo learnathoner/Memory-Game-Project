@@ -6,13 +6,15 @@
 }
 
 table {
+  margin: auto;
   height: 400px;
   width: 400px;
-  border-spacing: 10px;
+  border-spacing: calc((400px * .2) / 5);
   border-collapse: false;
   border: 1px solid black;
   background: blue;
   table-layout: fixed;
+  border-radius: 5px;
 }
 
 /*tr {
@@ -21,24 +23,71 @@ table {
 
 tr {
   background-color: red;
-  margin: 10px;
+  height: 20%;
 }
+
+
+
+
+/*
+*
+* TILE STATES
+*
+*/
+
+/**** Default State *****/
+/* When tile has been flipped over, non-hidden */
+/*
+td.clicked {
+  background-color: green;
+}
+
+td.clicked div {
+  display: flex;
+}*/
 
 td {
   border-radius: 5px;
+  background-color: green;
 }
 
 div {
+  margin-top: 0px;
+  margin-bottom: 0px;
   font-size: 2em;
   text-align: center;
-  max-height: 100%;
-  max-width: 100%;
   border: 1px solid black;
+  heigh: 100%;
+  widows: 100%;
 }
 
-.maki-library {
-  border: 1px solid white;
-  /*text-align: center;*/
-  /*margin-right: auto;
-  margin-left: auto;*/
+div.logo {
+  /*border: 1px solid white;*/
+  color: black;
+}
+
+
+/**** Hidden State ****/
+/* Default state when not clicked or selected */
+
+td.hidden {
+  background-color: black;
+}
+
+td.hidden div {
+  display: none;
+}
+
+
+
+/*** Matched State ****/
+/* After Tile has been matched */
+
+td.matched {
+  background-color: grey;
+}
+
+td.matched div {
+  display: flex;
+  color: red;
 }
