@@ -64,7 +64,8 @@ const Timer = {
 const SOUNDS = {
   flip: new Audio('sounds/flip.wav'),
   fail: new Audio('sounds/fail.wav'),
-  success: new Audio('sounds/success.wav')
+  success: new Audio('sounds/success.wav'),
+  win: new Audio('sounds/win.wav')
 };
 
 /*
@@ -254,6 +255,7 @@ const Game = {
     let numMatch = $('td.matched').length;
 
     if (numMatch === numTiles) {
+      SOUNDS.win.play();
       Game.toggleWinScreen();
     }
   },
@@ -282,6 +284,7 @@ const Game = {
 
   toggleWinScreen() {
     Timer.endTimer();
+
     let winTime = Timer.calculateTime();
     let starsLeft = $('ul#star_cont li.full').length;
 
