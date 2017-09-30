@@ -26,8 +26,32 @@ tr {
   height: 20%;
 }
 
+body * {
+  /*border: 1px solid black;*/
+  font-family: sans-serif;
+}
 
+/* List Styling */
 
+ul {
+  list-style-type: none;
+}
+
+li {
+  display: list-item;
+}
+
+ul#star_cont li {
+  position: relative;
+  float: left;
+  font-size: 1em;
+  padding: .2em;
+  color: black;
+}
+
+ul#star_cont li.full {
+  color: blue;
+}
 
 /*
 *
@@ -46,12 +70,66 @@ td.clicked div {
   display: flex;
 }*/
 
+#wrapper {
+  margin: 0 auto;
+  width: 400px;
+
+}
+
+#game_wrapper {
+  display: grid;
+  /*grid-template-rows: 30% 10% 60%;*/
+  grid-template-columns: 1fr 1fr;
+}
+
+#game_wrapper.hide {
+  display: none;
+}
+
+#game_title {
+  text-align: center;
+  /*grid-row: 1;*/
+  grid-column: 1 / -1;
+  /*width: 100%;*/
+  font-size: 1.5em;
+}
+
+#moves {
+  grid-row: 2;
+  grid-column: 1 / 2;
+  /*float: left;*/
+  /*width: 50%;*/
+  text-align: center;
+  font-size: .75em;
+}
+
+#moves_text {
+  vertical-align: middle;
+}
+
+#reset_cont {
+  grid-row: 2;
+  grid-column: 2;
+  /*float: right;*/
+  /*width: 50%;*/
+  text-align: center;
+  font-size: .75em;
+}
+
+#game_grid {
+  grid-column: 1 / -1;
+}
+
 td {
   border-radius: 5px;
   background-color: green;
 }
 
 div {
+  padding: 5px;
+}
+
+div.logo {
   margin-top: 0px;
   margin-bottom: 0px;
   font-size: 2em;
@@ -90,4 +168,31 @@ td.matched {
 td.matched div {
   display: flex;
   color: red;
+}
+
+/*
+*
+* Win Screen
+*
+*/
+
+#win_screen.hide {
+  display: none;
+}
+
+#win_screen {
+  margin-top: 100px;
+  text-align: center;
+}
+
+#win_msg {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+#play_again {
+  font-size: 1.25em;
+  background-color: red;
+  color: white;
+  border-radius: 5px;
 }

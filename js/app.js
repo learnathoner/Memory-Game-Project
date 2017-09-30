@@ -28,6 +28,8 @@ const ICONS = [
   'skiing'
 ];
 
+const STAR = "maki-religious-jewish";
+
 // Populates iconArray with icons in proper format
 function createIconArray() {
   let iconArray = [];
@@ -71,6 +73,52 @@ function populateTiles() {
 }
 
 populateTiles();
+
+/*
+*
+* GAME TIMER
+*
+*/
+
+const Timer = {
+  startTime: 0,
+  endTime: 0,
+
+  startTimer() {
+    let curDate = new Date();
+    let curTime = curDate.getTime();
+
+    this.startTime = curTime;
+  },
+
+  endTimer() {
+    let endDate = new Date();
+    let endTime = endDate.getTime();
+
+    this.endTime = endTime;
+  },
+
+  calculateTime() {
+    let timeInSeconds = Math.floor((this.endTime - this.startTime) / 1000);
+
+    let seconds = 0,
+        minutes = 0,
+        totalTime = '';
+
+    if (timeInSeconds > 60) {
+      minutes = Math.floor(timeInSeconds / 60);
+      seconds = timeInSeconds % 60;
+      totalTime = `${minutes} Minutes and ${seconds} Seconds`;
+    } else {
+      totalTime = `${timeInSeconds} Seconds`;
+    }
+
+    return totalTime;
+  }
+}
+
+// Starts timer initially when program loads
+Timer.startTimer();
 
 /*
 *
@@ -137,6 +185,7 @@ const Tile = {
           Tile.selected = '';
         }, 500);
       }
+      Game.updateMoves();
       //Delay makes tile.selected malfunction
       // Tile.selected = '';
     };
@@ -157,23 +206,85 @@ $('td.tile').click(function() {
 });
 
 const Game = {
+  moveCount: 0,
+  moveLoc: $('#num_moves'),
+
   resetTiles() {
     let tiles = $('td.tile');
     tiles.each(function() {
       $(this).attr('class','tile hidden');
-      console.log($(this).attr('class'))
     });
+  },
+
+  updateStars() {
+    let twoStars = 15,
+      oneStar = 18,
+      noStars = 21;
+
+    if (this.moveCount === twoStars ||
+        this.moveCount === oneStar ||
+        this.moveCount === noStars) {
+      let lastStar = $('ul#star_cont li.full').last();
+      lastStar.toggleClass('full');
+    }
+  },
+
+  resetStars() {
+    $('#star_cont li').each(function() {
+      $( this ).attr('class', `full ${STAR}`)
+    })
+  },
+
+  checkWin() {
+    let numTiles = $('td.tile').length;
+    let numMatch = $('td.matched').length;
+
+    if (numMatch === numTiles) {
+      Game.toggleWinScreen();
+    }
+  },
+
+  updateMoves() {
+    Game.checkWin();
+    this.moveCount++;
+    Game.updateStars();
+    this.moveLoc.text(`${this.moveCount} Moves`);
+  },
+
+  resetMoves() {
+    this.moveCount = 0;
+    this.moveLoc.text(`${this.moveCount} Moves`);
   },
 
   reset() {
     Game.resetTiles();
+    Game.resetMoves();
+    Game.resetStars();
     Tile.resetSelected();
     populateTiles();
+    Timer.startTimer();
+  },
+
+  toggleWinScreen() {
+    Timer.endTimer();
+    let winTime = Timer.calculateTime();
+    let starsLeft = $('ul#star_cont li.full').length;
+
+    $('#game_wrapper').toggleClass('hide');
+    $('#win_screen').toggleClass('hide');
+
+    $('#win_moves').html(Game.moveCount);
+    $('#win_stars').html(starsLeft);
+    $('#win_time').html(winTime);
   }
 };
 
-
-$('#reset').click(Game.reset);
+//TODO: Change reset back
+$('#reset').click(Game.toggleWinScreen);
+$('#play_again').click(function() {
+  Game.reset();
+  Game.toggleWinScreen();
+});
 
 // Fix this mess below:
 //
