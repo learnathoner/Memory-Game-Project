@@ -5,76 +5,20 @@
   font-family: 'maki', sans-serif;
 }
 
-table {
-  margin: auto;
-  height: 400px;
-  width: 400px;
-  border-spacing: calc((400px * .2) / 5);
-  border-collapse: false;
-  border: 1px solid black;
-  background: blue;
-  table-layout: fixed;
-  border-radius: 5px;
+div {
+  padding: 5px;
 }
 
-/*tr {
-  height: 100px;
-}*/
-
-tr {
-  background-color: red;
-  height: 20%;
-}
-
-body * {
-  /*border: 1px solid black;*/
-  font-family: sans-serif;
-}
-
-/* List Styling */
-
-ul {
-  list-style-type: none;
-}
-
-li {
-  display: list-item;
-}
-
-ul#star_cont li {
-  position: relative;
-  float: left;
-  font-size: 1em;
-  padding: .2em;
-  color: black;
-}
-
-ul#star_cont li.full {
-  color: blue;
-}
-
-/*
-*
-* TILE STATES
-*
-*/
-
-/**** Default State *****/
-/* When tile has been flipped over, non-hidden */
-/*
-td.clicked {
-  background-color: green;
-}
-
-td.clicked div {
-  display: flex;
-}*/
+/* MAIN WRAPPER */
 
 #wrapper {
+  font-family: sans-serif;
   margin: 0 auto;
   width: 400px;
 
 }
+
+/* GAME */
 
 #game_wrapper {
   display: grid;
@@ -88,45 +32,68 @@ td.clicked div {
 
 #game_title {
   text-align: center;
-  /*grid-row: 1;*/
   grid-column: 1 / -1;
-  /*width: 100%;*/
   font-size: 1.5em;
 }
 
 #moves {
   grid-row: 2;
   grid-column: 1 / 2;
-  /*float: left;*/
-  /*width: 50%;*/
   text-align: center;
   font-size: .75em;
-}
-
-#moves_text {
-  vertical-align: middle;
 }
 
 #reset_cont {
   grid-row: 2;
   grid-column: 2;
-  /*float: right;*/
-  /*width: 50%;*/
   text-align: center;
   font-size: .75em;
+}
+
+#reset {
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: white;
+  background: indigo;
+  border-radius: 5px;
 }
 
 #game_grid {
   grid-column: 1 / -1;
 }
 
-td {
+table {
+  margin: auto;
+  height: 400px;
+  width: 400px;
+  border-spacing: calc((400px * .2) / 5);
+  border-collapse: false;
+  border: 1px solid black;
+  background: linear-gradient(141deg, #0fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
+  table-layout: fixed;
   border-radius: 5px;
-  background-color: green;
 }
 
-div {
-  padding: 5px;
+tr {
+  height: 20%;
+}
+
+/* Tile Hidden by default until clicked */
+td.hidden {
+  background-color: #549dbc;
+}
+
+td.hidden div {
+  display: none;
+}
+
+/* Tile when flipped over */
+td {
+  border-radius: 5px;
+  background-color: #3ba5a2;
+  border: 1px solid black;
+  justify-content: center;
+  box-shadow: 5px 5px 5px #888888;
 }
 
 div.logo {
@@ -134,40 +101,44 @@ div.logo {
   margin-bottom: 0px;
   font-size: 2em;
   text-align: center;
-  border: 1px solid black;
-  heigh: 100%;
-  widows: 100%;
 }
 
 div.logo {
-  /*border: 1px solid white;*/
   color: black;
 }
 
-
-/**** Hidden State ****/
-/* Default state when not clicked or selected */
-
-td.hidden {
-  background-color: black;
-}
-
-td.hidden div {
-  display: none;
-}
-
-
-
-/*** Matched State ****/
-/* After Tile has been matched */
-
+/* Tile When Matched */
 td.matched {
   background-color: grey;
 }
 
 td.matched div {
-  display: flex;
   color: red;
+}
+
+/* List Styling */
+
+ul {
+  list-style-type: none;
+}
+
+li {
+  display: list-item;
+}
+
+/* Stars full by default */
+
+ul#star_cont li.full {
+  color: blue;
+}
+
+/* Stars when empty */
+ul#star_cont li {
+  position: relative;
+  float: left;
+  font-size: 1em;
+  padding: .2em;
+  color: black;
 }
 
 /*
@@ -195,4 +166,8 @@ td.matched div {
   background-color: red;
   color: white;
   border-radius: 5px;
+}
+
+#win_moves, #win_stars, #win_time {
+  font-weight: bold;
 }

@@ -1,6 +1,11 @@
 /*
+Order: General functions, Images, Populate cells, Tile, Game,
+Event Listeners, Starting actions
+*/
+
+/*
 *
-* GENERAL FUNCTION
+********* GENERAL FUNCTIONS - Random Number Gen and Timer
 *
 */
 
@@ -9,81 +14,12 @@ function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is inclusive and the minimum is inclusive
 }
 
-/*
-*
-* CREATE IMAGES USED
-*
-*/
-
-
-// 8 icons From Maki font set, must be used as a class and prefaced by maki-
-const ICONS = [
-  'aboveground-rail',
-  'art-gallery',
-  'basketball',
-  'cafe',
-  'cinema',
-  'fire-station',
-  'library',
-  'skiing'
-];
-
-const STAR = "maki-religious-jewish";
-
-// Populates iconArray with icons in proper format
-function createIconArray() {
-  let iconArray = [];
-
-  for (let icon of ICONS) {
-    iconArray.push(`maki-${icon}`);
-    iconArray.push(`maki-${icon}`);
-  }
-
-  return iconArray;
-}
-
-/*
-*
-* POPULATE CELLS
-*
-*/
-
-// Populates each tile with random icon from array
-function populateTiles() {
-  // Gathers list of tiles
-  let tileList = $('.tile');
-  let iconArray = createIconArray();
-
-  // sets toPopulate = number of tiles
-  let toPopulate = tileList.length;
-
-  tileList.each(function () {
-    // Creates randomNum from 0 to toPopulate
-    let randomNum = randomInt(0, toPopulate);
-    // Draws random icon from Array
-    let drawnIcon = iconArray.splice(randomNum, 1);
-
-    // Adds Icon as div / class to selected tile
-    $( this ).html(`<div class="${drawnIcon} logo hidden"></div>`);
-
-    // Places icon in back of array, draws from 0 - toPopulate-1
-    iconArray.push(drawnIcon);
-    toPopulate--;
-  });
-}
-
-populateTiles();
-
-/*
-*
-* GAME TIMER
-*
-*/
-
+// Timer functions
 const Timer = {
   startTime: 0,
   endTime: 0,
 
+  // Initializes Timer.startTime to current time in ms
   startTimer() {
     let curDate = new Date();
     let curTime = curDate.getTime();
@@ -91,6 +27,7 @@ const Timer = {
     this.startTime = curTime;
   },
 
+  // Sets Timer.endTime to time stopped in ms
   endTimer() {
     let endDate = new Date();
     let endTime = endDate.getTime();
@@ -98,6 +35,7 @@ const Timer = {
     this.endTime = endTime;
   },
 
+  // Returns difference between time started and stopped
   calculateTime() {
     let timeInSeconds = Math.floor((this.endTime - this.startTime) / 1000);
 
@@ -117,30 +55,102 @@ const Timer = {
   }
 }
 
-// Starts timer initially when program loads
-Timer.startTimer();
-
 /*
 *
-* TILE FUNCTIONS
+*********** SOUNDS
 *
 */
 
-// Functions for the tiles - select tile, check for match, etc
+const SOUNDS = {
+  flip: new Audio('sounds/flip.wav'),
+  fail: new Audio('sounds/fail.wav'),
+  success: new Audio('sounds/success.wav')
+};
+
+/*
+*
+*********** IMAGE STORAGE
+*
+*/
+
+// 8 icons From Maki font set, must be used as a class and prefaced by maki-
+const ICONS = [
+  'aboveground-rail',
+  'art-gallery',
+  'basketball',
+  'cafe',
+  'cinema',
+  'fire-station',
+  'library',
+  'skiing'
+];
+
+// Star shape from Maki set
+const STAR = "maki-religious-jewish";
+
+// Converts 8 icons from ICONS into 16 icon array and returns
+function createIconArray() {
+  let iconArray = [];
+
+  for (let icon of ICONS) {
+    iconArray.push(`maki-${icon}`);
+    iconArray.push(`maki-${icon}`);
+  }
+  return iconArray;
+}
+
+/*
+*
+******** POPULATE CELLS WITH IMAGES
+*
+*/
+
+// Populates each tile with random icon from array
+function populateTiles() {
+  // Gathers list of tiles
+  let tileList = $('.tile');
+  let iconArray = createIconArray();
+
+  // Sets toPopulate = number of tiles
+  let toPopulate = tileList.length;
+
+  // Loops over each tile, assigns icon, puts icon in back of array
+  tileList.each(function () {
+    let randomNum = randomInt(0, toPopulate);
+    let drawnIcon = iconArray.splice(randomNum, 1);
+
+    $( this ).html(`<div class="${drawnIcon} logo hidden"></div>`);
+
+    // Places icon in back of array, draws from 0 - toPopulate-1
+    iconArray.push(drawnIcon);
+    toPopulate--;
+  });
+}
+
+
+/*
+*
+******** GAME TILE FUNCTIONS
+*
+*/
+
+// Functions related to clicking on the game tiles
 const Tile = {
   selected: '',
+
+  // Flips game tile over
+  toggleHidden(tile) {
+    SOUNDS.flip.play();
+    $(tile).toggleClass('hidden');
+  },
 
   resetSelected() {
     this.selected = '';
   },
 
-  toggleHidden(tile) {
-    $(tile).toggleClass('hidden');
-  },
-
   // Checks if there is another tile currently selected
   hasSelected(clickedTile) {
-    // If no other tile selected, sets last clicked to "selected" and reveals
+    // If no tile selected, sets selected to last clicked and flips
     if (this.selected === '') {
       this.selected = clickedTile;
       Tile.toggleHidden(clickedTile);
@@ -162,48 +172,52 @@ const Tile = {
     return false;
   },
 
-  // Checks if second tile a match with currently selected
+  // Checks if clickedTile is a match with selected tile
   checkMatch(clickedTile) {
-    // Check for doubleclicks
+    // Check that it's not a doubleclick before proceeding
     if (!Tile.doubleClick(clickedTile)) {
       // Displays second tile
-      //TODO: Count as move
       Tile.toggleHidden(clickedTile);
 
-      // Takes class containing Icon names from tiles
-      let selectedIcon = Tile.selected.find('div').attr('class');
-      let clickedIcon = clickedTile.find('div').attr('class');
+      let selectedDiv = Tile.selected.find('div');
+      let clickedDiv = clickedTile.find('div');
+      // Gets class containing ICON name from tiles
+      let selectedIcon = selectedDiv.attr('class');
+      let clickedIcon = clickedDiv.attr('class');
 
       if (clickedIcon === selectedIcon) {
+
         Tile.selected.addClass('matched');
         clickedTile.addClass('matched');
+
+        selectedDiv.effect('bounce');
+        clickedDiv.effect('bounce');
+
+        SOUNDS.success.play();
+
         Tile.selected = '';
       } else {
+        //TODO: Create match and fail effects
+        selectedDiv.effect('shake');
+        clickedDiv.effect('shake');
+        SOUNDS.fail.play();
+
         window.setTimeout(function() {
           Tile.toggleHidden(Tile.selected);
           Tile.toggleHidden(clickedTile);
           Tile.selected = '';
-        }, 500);
+        }, 600);
       }
       Game.updateMoves();
-      //Delay makes tile.selected malfunction
-      // Tile.selected = '';
     };
   }
 };
 
-$('td.tile').click(function() {
-  let clickedTile = $(this);
-
-  //Checks if another tile selected, if so, tests for match
-  if (!clickedTile.hasClass('matched') && Tile.hasSelected(clickedTile)) {
-    Tile.checkMatch(clickedTile)
-  };
-  // if (!currentTile.hasClass('matched')) {
-  //   currentTile.toggleClass("hidden");
-  //   matchTest(currentTile);
-  // }
-});
+/*
+*
+*********** GAME FUNCTIONS - updates moves, stars, resets, etc
+*
+*/
 
 const Game = {
   moveCount: 0,
@@ -244,11 +258,12 @@ const Game = {
     }
   },
 
+  // Updates moves and stars, checks if won
   updateMoves() {
-    Game.checkWin();
     this.moveCount++;
     Game.updateStars();
     this.moveLoc.text(`${this.moveCount} Moves`);
+    Game.checkWin();
   },
 
   resetMoves() {
@@ -279,46 +294,39 @@ const Game = {
   }
 };
 
-//TODO: Change reset back
-$('#reset').click(Game.toggleWinScreen);
+/*
+*
+************* EVENT LISTENERS
+*
+*/
+
+// On tile click
+$('td.tile').click(function() {
+  let clickedTile = $(this);
+
+  // Checks tile not already matched
+  if (!clickedTile.hasClass('matched')) {
+    // If another tile selected, checks both for a match
+    if (Tile.hasSelected(clickedTile)) {
+      Tile.checkMatch(clickedTile)
+    }
+  }
+});
+
+$('#reset').click(Game.reset);
+
 $('#play_again').click(function() {
   Game.reset();
   Game.toggleWinScreen();
 });
 
-// Fix this mess below:
-//
-// let selected = '';
-//
-// function matchTest(tile) {
-//   // If no cell currently selected, sets selected to current tile
-//   if (selected === '') {
-//     selected = tile;
-//   } else {
-//     // If same cell clicked on twice, hides the cell
-//     if (tile.is(selected)) {
-//       // Why does toggleClass not work with tile?
-//       // tile.toggleClass("hidden");
-//       tile.addClass("hidden");
-//       selected = '';
-//     } else {
-//       // If selected and different tile, checks whether their icons are equal
-//       let selectedIcon = selected.find('div');
-//       let tileIcon = tile.find('div');
-//
-//       if (selectedIcon.attr('class') === tileIcon.attr('class')) {
-//         tile.addClass("matched");
-//         selected.addClass("matched");
-//         selected = '';
-//         //Confirm match
-//       } else {
-//         //No match - reveal next, show nomatch effect, hide
-//         window.setTimeout(function() {
-//           tile.addClass("hidden");
-//           selected.addClass("hidden");
-//           selected = '';
-//         }, 500)
-//       }
-//     }
-//   }
-// }
+/*
+*
+* INITIAL FUNCTIONS TO START
+*
+*/
+
+$(document).ready(function() {
+  populateTiles();
+  Timer.startTimer();
+});
