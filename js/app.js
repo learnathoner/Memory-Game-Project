@@ -74,28 +74,28 @@ const SOUNDS = {
 *
 */
 
-// 8 icons From Maki font set, must be used as a class and prefaced by maki-
+// 8 icons From Ion font set, must be used as a class and prefaced by icon ion-
 const ICONS = [
-  'aboveground-rail',
-  'art-gallery',
-  'basketball',
-  'cafe',
-  'cinema',
-  'fire-station',
-  'library',
-  'skiing'
+  'help-buoy',
+  'heart',
+  'model-s',
+  'beer',
+  'pizza',
+  'bug',
+  'headphone',
+  'cash'
 ];
 
-// Star shape from Maki set
-const STAR = "maki-religious-jewish";
+// Star shape from ion
+const STAR = "icon ion-ios-star";
 
 // Converts 8 icons from ICONS into 16 icon array and returns
 function createIconArray() {
   let iconArray = [];
 
   for (let icon of ICONS) {
-    iconArray.push(`maki-${icon}`);
-    iconArray.push(`maki-${icon}`);
+    iconArray.push(`icon ion-${icon}`);
+    iconArray.push(`icon ion-${icon}`);
   }
   return iconArray;
 }
@@ -198,17 +198,25 @@ const Tile = {
 
         Tile.selected = '';
       } else {
-        //TODO: Create match and fail effects
+        // If tiles NOT a match
+
+        // Stores selected in var, clears Tile.selected
+        let selected = Tile.selected;
+        Tile.selected = ''
+
+        // Shakes the icon divs and plays fail noise
         selectedDiv.effect('shake');
         clickedDiv.effect('shake');
         SOUNDS.fail.play();
 
+        // hides tiles after timeout, allowing time for shake effects
         window.setTimeout(function() {
-          Tile.toggleHidden(Tile.selected);
+          Tile.toggleHidden(selected);
           Tile.toggleHidden(clickedTile);
-          Tile.selected = '';
+          ;
         }, 600);
       }
+      // Updates move count after fail or match
       Game.updateMoves();
     };
   }
@@ -239,14 +247,15 @@ const Game = {
     if (this.moveCount === twoStars ||
         this.moveCount === oneStar ||
         this.moveCount === noStars) {
-      let lastStar = $('ul#star_cont li.full').last();
-      lastStar.toggleClass('full');
+      let lastStar = $('ul#star_cont li.ion-ios-star').last();
+      //Changes last star to star outline after moves
+      lastStar.attr('class', 'icon ion-ios-star-outline');
     }
   },
 
   resetStars() {
     $('#star_cont li').each(function() {
-      $( this ).attr('class', `full ${STAR}`)
+      $( this ).attr('class', `${STAR}`)
     })
   },
 
@@ -286,7 +295,7 @@ const Game = {
     Timer.endTimer();
 
     let winTime = Timer.calculateTime();
-    let starsLeft = $('ul#star_cont li.full').length;
+    let starsLeft = $('ul#star_cont li.ion-ios-star').length;
 
     $('#game_wrapper').toggleClass('hide');
     $('#win_screen').toggleClass('hide');
@@ -331,5 +340,6 @@ $('#play_again').click(function() {
 
 $(document).ready(function() {
   populateTiles();
+  Game.resetStars();
   Timer.startTimer();
 });
