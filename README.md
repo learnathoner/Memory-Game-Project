@@ -19,8 +19,6 @@ The rules are pretty simple:
 
 Once you win, the game will tell you your time, stars, and moves required!
 
-**Note**: Clicking on the same tile twice will NOT count as a move. That's in case you accidentally click on the wrong tile. Yes, you can use that to cheat and see all the tiles without using moves... but don't.
-
 ## Options
 
 - The **Reset** Button resets your moves, stars, and the timer, allowing you to start over

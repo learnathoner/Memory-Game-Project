@@ -18,26 +18,36 @@ function randomInt(min, max) {
 const Timer = {
   startTime: 0,
   endTime: 0,
+  intervalID: '',
 
   // Initializes Timer.startTime to current time in ms
   startTimer() {
+    $('#game_time').html('0 Seconds');
+
     let curDate = new Date();
     let curTime = curDate.getTime();
 
     this.startTime = curTime;
+    // When starts, sets interval to showtime every second
+    this.intervalID = setInterval(this.showTime, 1000);
   },
 
   // Sets Timer.endTime to time stopped in ms
   endTimer() {
-    let endDate = new Date();
-    let endTime = endDate.getTime();
+    clearInterval(this.intervalID);
+  },
 
-    this.endTime = endTime;
+  showTime() {
+    $('#game_time').html(Timer.calculateTime);
   },
 
   // Returns difference between time started and stopped
   calculateTime() {
-    let timeInSeconds = Math.floor((this.endTime - this.startTime) / 1000);
+    let endDate = new Date();
+    let endTime = endDate.getTime();
+
+    // this.endTime = endTime;
+    let timeInSeconds = Math.floor((endTime - Timer.startTime) / 1000);
 
     let seconds = 0,
         minutes = 0,
@@ -161,64 +171,49 @@ const Tile = {
     return true;
   },
 
-  // Checks if same tile clicked on twice
-  doubleClick(clickedTile) {
-    // If same tile, hides and resets selected. No move penalty
-    if (clickedTile.is(Tile.selected)) {
-      Tile.toggleHidden(clickedTile);
-      Tile.resetSelected();
-      return true;
-    }
-    // If different tile, returns false
-    return false;
-  },
-
   // Checks if clickedTile is a match with selected tile
   checkMatch(clickedTile) {
-    // Check that it's not a doubleclick before proceeding
-    if (!Tile.doubleClick(clickedTile)) {
-      // Displays second tile
-      Tile.toggleHidden(clickedTile);
+    // Displays second tile
+    Tile.toggleHidden(clickedTile);
 
-      let selectedDiv = Tile.selected.find('div');
-      let clickedDiv = clickedTile.find('div');
-      // Gets class containing ICON name from tiles
-      let selectedIcon = selectedDiv.attr('class');
-      let clickedIcon = clickedDiv.attr('class');
+    let selectedDiv = Tile.selected.find('div');
+    let clickedDiv = clickedTile.find('div');
+    // Gets class containing ICON name from tiles
+    let selectedIcon = selectedDiv.attr('class');
+    let clickedIcon = clickedDiv.attr('class');
 
-      if (clickedIcon === selectedIcon) {
+    if (clickedIcon === selectedIcon) {
 
-        Tile.selected.addClass('matched');
-        clickedTile.addClass('matched');
+      Tile.selected.addClass('matched');
+      clickedTile.addClass('matched');
 
-        selectedDiv.effect('bounce');
-        clickedDiv.effect('bounce');
+      selectedDiv.effect('bounce');
+      clickedDiv.effect('bounce');
 
-        SOUNDS.success.play();
+      SOUNDS.success.play();
 
-        Tile.selected = '';
-      } else {
-        // If tiles NOT a match
+      Tile.selected = '';
+    } else {
+      // If tiles NOT a match
 
-        // Stores selected in var, clears Tile.selected
-        let selected = Tile.selected;
-        Tile.selected = ''
+      // Stores selected in var, clears Tile.selected
+      let selected = Tile.selected;
+      Tile.selected = ''
 
-        // Shakes the icon divs and plays fail noise
-        selectedDiv.effect('shake');
-        clickedDiv.effect('shake');
-        SOUNDS.fail.play();
+      // Shakes the icon divs and plays fail noise
+      selectedDiv.effect('shake');
+      clickedDiv.effect('shake');
+      SOUNDS.fail.play();
 
-        // hides tiles after timeout, allowing time for shake effects
-        window.setTimeout(function() {
-          Tile.toggleHidden(selected);
-          Tile.toggleHidden(clickedTile);
-          ;
-        }, 600);
-      }
-      // Updates move count after fail or match
-      Game.updateMoves();
-    };
+      // hides tiles after timeout, allowing time for shake effects
+      window.setTimeout(function() {
+        Tile.toggleHidden(selected);
+        Tile.toggleHidden(clickedTile);
+        ;
+      }, 600);
+    }
+    // Updates move count after fail or match
+    Game.updateMoves();
   }
 };
 
@@ -241,12 +236,10 @@ const Game = {
 
   updateStars() {
     let twoStars = 15,
-      oneStar = 18,
-      noStars = 21;
+      oneStar = 18;
 
     if (this.moveCount === twoStars ||
-        this.moveCount === oneStar ||
-        this.moveCount === noStars) {
+        this.moveCount === oneStar) {
       let lastStar = $('ul#star_cont li.ion-ios-star').last();
       //Changes last star to star outline after moves
       lastStar.attr('class', 'icon ion-ios-star-outline');
@@ -317,7 +310,7 @@ $('td.tile').click(function() {
   let clickedTile = $(this);
 
   // Checks tile not already matched
-  if (!clickedTile.hasClass('matched')) {
+  if (!clickedTile.hasClass('matched') && !clickedTile.is(Tile.selected)) {
     // If another tile selected, checks both for a match
     if (Tile.hasSelected(clickedTile)) {
       Tile.checkMatch(clickedTile)

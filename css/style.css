@@ -90,6 +90,11 @@ ul#star_cont li.ion-ios-star {
   border-radius: 5px;
 }
 
+#time_wrap {
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
 /* Contains Game grid/table */
 
 #game_grid {
